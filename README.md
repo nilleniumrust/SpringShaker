@@ -14,13 +14,13 @@ springshaker.new()'s parameters are
 	__RenderPriority: Enum.RenderPriority,
 
 ## TLDR, wise... 
-Magnitude: Master volume for the shake (0 = off, 10 = crazy).
-Roughness: Frequency of the jitters (Low = smooth lukewater, High = earthquake).
-FadeInTime: Seconds to ramp up from 0 to full power.
-PosInflux: How many studs the camera moves on X, Y, Z.
-RotInflux: How many degrees the camera rotates on X, Y, Z.
-FadeOutTime: Seconds to ramp down to 0 after the shake ends.
-RenderPriority: Where in the frame-cycle the code runs (keep it at Camera).
+* Magnitude: Master volume for the shake (0 = off, 10 = crazy).
+* Roughness: Frequency of the jitters (Low = smooth lukewater, High = earthquake).
+* FadeInTime: Seconds to ramp up from 0 to full power.
+* PosInflux: How many studs the camera moves on X, Y, Z.
+* RotInflux: How many degrees the camera rotates on X, Y, Z.
+* FadeOutTime: Seconds to ramp down to 0 after the shake ends.
+* RenderPriority: Where in the frame-cycle the code runs (keep it at Camera).
 
 
 (F.E) 
