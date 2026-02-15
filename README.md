@@ -58,20 +58,20 @@ For intuitive research, here's the graph, accumulated by me: [Desmos Demonstrati
 | __SpringShakerClassDef | `SpringShakerPresets & BuiltIn.__camShakePreset` | A data map array that contains valid information points which inhibits private links and data structure. |
 
 **__SpringShakerClassDef**
-| Value | Type | Pointers | Returns | Content |
-| --- | --- | --- | --- | --- |
-| __index | Metadata (function) | `self, __indexmap: string` | () -> () | A linked data map that shows overall infastructural data of the class | 
-| Active | Variable (boolean) | `null` | `null` | A boolean that verifies whether if the class is currently active. (:GetState() effects) |
-| Magnitude | Constant (number) | `null` | `null` | Scale factor of the entire shake. Measured as Ampltiude | 
-| Roughness | Constant (number) | `null` | `null` | Speed of the perlin noise and spring |
-| FadeInTime | number | `null` | `null` | Defines how many seconds it takes for the spring shake to transition from a CurrentTime (ranging 0.0 -> 1.0) | 
-| FadeOutTime | number | `null` | `null` | Defines how many seconds it would take for the spring to 'calm down' (Connected to E(t)) |
-| Tension | number | `null` | `null`| A restoring force, of how much the camera needs to return to its position. **(XYZ): (0,0,0)** |
-| Damping or Damper | number | `null` | `null` | The resistor of stopping the camera to shake forever. |
-| Velocity | Vector3 | `null` | `null` | The speed of the camera in which it's moving in miliseconds |
-| __RenderName | string | `null` | `null` | For BindToRenderStep(), this is unique coding. If you want a custom RenderName, you can input it here. On default, it uses GUID. | 
-| __RenderPriority | Enum.RenderPriority | `null` | `null` | Determines when and at what frame should the shake be allowed. By default, the code will set it to 201. |
-| RotationalInfluence | Vector3 | `null` | `null` | It is a pin-point translator (1D) to (3D), which by per-axis, allows you to constrain the spring mathematics to edit at what direction you would like it to shake. | 
+| Value | Type |  Content |
+| --- | --- | --- |
+| __index | Metadata (function) | Redirects property lookups to the class prototype for memory-efficient method sharing. | 
+| Active | Variable (boolean) | A boolean that verifies whether if the class is currently active. (:GetState() effects) |
+| Magnitude | Constant (number) | Scale factor of the entire shake. Measured as Ampltiude | 
+| Roughness | Constant (number) | Speed of the perlin noise and spring |
+| FadeInTime | number | Defines how many seconds it takes for the spring shake to transition from a CurrentTime (ranging 0.0 -> 1.0) | 
+| FadeOutTime | number | Defines how many seconds it would take for the spring to 'calm down' (Connected to E(t)) |
+| Tension | number | A restoring force, of how much the camera needs to return to its position. **(XYZ): (0,0,0)** |
+| Damping or Damper | number | The resistor of stopping the camera to shake forever. |
+| Velocity | Vector3  | The speed of the camera in which it's moving in miliseconds |
+| __RenderName | string | For BindToRenderStep(), this is unique coding. If you want a custom RenderName, you can input it here. On default, it uses GUID. | 
+| __RenderPriority | Enum.RenderPriority | Determines when and at what frame should the shake be allowed. By default, the code will set it to 201. |
+| RotationalInfluence | Vector3 | It is a pin-point translator (1D) to (3D), which by per-axis, allows you to constrain the spring mathematics to edit at what direction you would like it to shake. | 
 
 
 | Functions | Parameters | Returns | Description | Recommended to run? |
