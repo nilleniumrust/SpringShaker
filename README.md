@@ -17,7 +17,8 @@ springshaker.new()'s parameters are
 | `RotationInfluence` | Vector3 | It is a pin-point translator (1D) to (3D), which by per-axis, allows you to constrain the spring mathematics to edit at what direction you would like it to shake. | 
 | `__RenderPriority` | Enum.RenderPriority | Determines when and at what frame should the shake be allowed. By default, the code will set it to 201. |
 
-**<code style="color : Darkorange">NOTE</code>**: Magnitude cannot overpass more than (10^5), a natural resemblance happens called [Resonance](https://en.wikipedia.org/wiki/Resonance)
+**<code style="color : Darkorange">NOTE</code>**: Magnitude cannot overpass more than (10^5), a natural resemblance in Physics happens, called [Resonance](https://en.wikipedia.org/wiki/Resonance). It is due to F(t), frequency of the
+force, matches the S(t) natural frequency of the spring, thus turning into mathematics an impossible to detect, unregistered number, in which the engine cannot properly render.
 
 # Example
 ```lua 
