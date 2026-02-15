@@ -57,42 +57,44 @@ Before 5 secconds, the code will be triggered and a feel of an Earthquake will b
 [Janitor v1.17.0](https://github.com/howmanysmall/Janitor/tree/main) by @howmanysmall
 
 # Benchmarking & Testing
-For intuitive research, here's the graph, accumulated by me: [Desmos Demonstration](https://www.desmos.com/calculator/r8iharhx3y)
-From maximum stress testing, SpringShaker took around 0.097s max and had a single count of call.
+* For intuitive research, here's the graph, accumulated by me: [Desmos Demonstration](https://www.desmos.com/calculator/r8iharhx3y)
+* From maximum stress testing, SpringShaker took around 0.097s max and had a single count of call. Average call time: 0.04-0.05s.
 
 **Flamegraph** 
-Exclusive, Inclusive 6%
-Inclusive Average Size 48 bytes
-Exclusive, Inclusive Alloc Size 6919
+* Exclusive, Inclusive - **6%**
+* Inclusive Average Size - **48 bytes**
+* Exclusive, Inclusive Alloc Size - **6919**
 
 * **<code>⚠ NOTE</code>**: I have not done proper benchmarking yet, but it runs smooth on harsh physics.
 
 # API 
 ## [springshaker.lua](https://github.com/nilleniumrust/CameraShaker-optimized/blob/main/springshaker/springshaker.lua)
+
 ### CONSTRUCTOR (SpringShaker)
+
 | Enums | Returns | Description |
 | --- | --- | --- |
 | `__PresetMap` | {...} | Returns the array of Presets, which can be used on the function of :GetPreset() |
 
 | Types | Inhibits | Description | 
 | --- | --- | --- |
-| __SpringShakerClassDef | `SpringShakerPresets & BuiltIn.__camShakePreset` | A data map array that contains valid information points which inhibits private links and data structure. |
+| `__SpringShakerClassDef` | `SpringShakerPresets & BuiltIn.__camShakePreset` | A data map array that contains valid information points which inhibits private links and data structure. |
 
 **__SpringShakerClassDef**
 | Value | Type |  Content |
 | --- | --- | --- |
-| __index | Metadata (function) | Redirects property lookups to the class prototype for memory-efficient method sharing. | 
-| Active | Variable (boolean) | A boolean that verifies whether if the class is currently active. (:GetState() effects) |
-| Magnitude | Constant (number) | Scale factor of the entire shake. Measured as Ampltiude | 
-| Roughness | Constant (number) | Speed of the perlin noise and spring |
-| FadeInTime | number | Defines how many seconds it takes for the spring shake to transition from a CurrentTime (ranging 0.0 -> 1.0) | 
-| FadeOutTime | number | Defines how many seconds it would take for the spring to 'calm down' (Connected to E(t)) |
-| Tension | number | A restoring force, of how much the camera needs to return to its position. **(XYZ): (0,0,0)** |
-| Damping or Damper | number | The resistor of stopping the camera to shake forever. |
-| Velocity | Vector3  | The speed of the camera in which it's moving in miliseconds |
-| __RenderName | string | For BindToRenderStep(), this is unique coding. If you want a custom RenderName, you can input it here. On default, it uses GUID. | 
-| __RenderPriority | Enum.RenderPriority | Determines when and at what frame should the shake be allowed. By default, the code will set it to 201. |
-| RotationalInfluence | Vector3 | It is a pin-point translator (1D) to (3D), which by per-axis, allows you to constrain the spring mathematics to edit at what direction you would like it to shake. | 
+| __index | `Metadata (function)` | Redirects property lookups to the class prototype for memory-efficient method sharing. | 
+| Active | `Variable (boolean)` | A boolean that verifies whether if the class is currently active. (:GetState() effects) |
+| Magnitude | `Constant (number)` | Scale factor of the entire shake. Measured as Ampltiude | 
+| Roughness | `Constant (number)` | Speed of the perlin noise and spring |
+| FadeInTime | `number` | Defines how many seconds it takes for the spring shake to transition from a CurrentTime (ranging 0.0 -> 1.0) | 
+| FadeOutTime | `number` | Defines how many seconds it would take for the spring to 'calm down' (Connected to E(t)) |
+| Tension | `number` | A restoring force, of how much the camera needs to return to its position. **(XYZ): (0,0,0)** |
+| Damping or Damper | `number` | The resistor of stopping the camera to shake forever. |
+| Velocity | `Vector3`  | The speed of the camera in which it's moving in miliseconds |
+| __RenderName | `string` | For BindToRenderStep(), this is unique coding. If you want a custom RenderName, you can input it here. On default, it uses GUID. | 
+| __RenderPriority | `Enum.RenderPriority` | Determines when and at what frame should the shake be allowed. By default, the code will set it to 201. |
+| RotationalInfluence | `Vector3` | It is a pin-point translator (1D) to (3D), which by per-axis, allows you to constrain the spring mathematics to edit at what direction you would like it to shake. | 
 
 
 
@@ -102,10 +104,10 @@ Exclusive, Inclusive Alloc Size 6919
 | :GetPreset() | `PresetName: string` | `__SpringShakerClassDef` | Returns a preset found from the preset table. You can use this preset for general functions, without building the new constructor class.| **Yes (if not using .new())** |
 | :Start() | `__SpringShakerClassDef` | `null` | A function that starts the method to update the camera rendering, and management of renovating it. | **No** |
 | :Halt() | `__SpringShakerClassDef` | `null` | Forces a specific shaker class to stop functioning, but does not delete it. | **Optional** |
-| :HaltAll() | FadeOutTime: number | `null` | Forces every single shaker class to stop functioning, but does not delete it. | **Optional** |
+| :HaltAll() | `FadeOutTime: number` | `null` | Forces every single shaker class to stop functioning, but does not delete it. | **Optional** |
 | :RecycleAll() | No parameters. | `null` | Garbage cleans every single shaker class and empties memory | **Optional** |
-| :HaltDurationWise() | Time: number | `null` | Optional fadeout duration for overriding. | **Optional. Recommended for :Shake()** |
-| :UpdateAll() | dx: number | `CFrame` | Internal core loop that calculates every single combined CFrame of active springs. | **No** | 
+| :HaltDurationWise() |`Time: number` | `null` | Optional fadeout duration for overriding. | **Optional. Recommended for :Shake()** |
+| :UpdateAll() | `dx: number` | `CFrame` | Internal core loop that calculates every single combined CFrame of active springs. | **No** | 
 | :Recycle() | `__SpringShakerClass` | `null` | Garbage cleans a specific shaker class and empties memory hash of it | **Optional** |
 | :Append() |`__SpringShakerClass` | `null`| Adds a specific shaker class for the overall memory. | **No** | 
 | :ShakeSustained() | `__SpringShakerClassDef` | () -> CFrame | Starts a shake that lasts until manually stopped | **Yes, after you run .new() or :GetPreset()** |
@@ -119,9 +121,9 @@ Exclusive, Inclusive Alloc Size 6919
 | Functions | Parameters | Description |
 | --- | --- | --- |
 | `.new()` | `__SpringShakerDefClass` | Inherits the same __SpringShakerClassDef as its table, but more modified and a stable mathematics version. It is then to be given to the main module, for purpose and security. |
-| `:Update()` | dx: number | The main handler of the connected springs in general physics and mathematics. | 
-| `:FadeOut()` | Time: number | The time to it takes to calm down and return to zero in overall. Direct connection to E(t) frequency. |
-| `:FadeIn()` | Time: number | The amount of time it takes to reach the full magnitude (amplitude) of the spring. | 
+| `:Update()` | `dx: number` | The main handler of the connected springs in general physics and mathematics. | 
+| `:FadeOut()` | `Time: number` | The time to it takes to calm down and return to zero in overall. Direct connection to E(t) frequency. |
+| `:FadeIn()` | `Time: number` | The amount of time it takes to reach the full magnitude (amplitude) of the spring. | 
 | `:GetFadeMagnitude()` | `null` | Returns the current multiplier of the shake (0-1). Used to determine the remaining intensity based on FadeIn/FadeOut progress. |
 | `:IsShaking()` | `null` | Logic gate that contains if the Spring is in 'Shaking' state |
 | `:IsFading()` | `null` | Logic gate that tells if the spring is currently 'fading in'| 
