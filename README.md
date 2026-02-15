@@ -40,7 +40,7 @@ local springshaker_test = springshaker.new({
 
 springshaker:ShakeOnce(springshaker_test, 2)
 ```
-This code will pull out a small explosion / vibration feeling on your camera for around two seconds. 
+This code above will pull out a small explosion / grenade explosion feeling on your camera for around two seconds. 
 
 ```lua
 local springshaker = require(Path.To.SpringShaker)
