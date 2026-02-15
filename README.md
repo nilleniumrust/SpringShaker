@@ -51,11 +51,11 @@ task.delay(5, function()
    springshaker:HaltDurationWise(1)
 end)
 ```
-Before 5 secconds, the code will be triggered and a feel of an Earthquake will be presented through your camera, then after this, the spring dies down, loosing momentum in 1 second.
+Before 5 seconds, the code will be triggered and a feel of an Earthquake will be presented through your camera, then after this, the spring dies down, loosing momentum in 1 second.
 
 # Where do I download this module?
-You can get this module from the [Roblox Library](https://create.roblox.com/store/asset/72358969628018/SpringShaker)
-Or you can download it from the latest release of [SpringShaker](https://github.com/nilleniumrust/SpringShaker/releases/tag/1.1)
+## You can get this module from the [Roblox Library](https://create.roblox.com/store/asset/72358969628018/SpringShaker)
+## Or you can download it from the latest release of [SpringShaker](https://github.com/nilleniumrust/SpringShaker/releases/tag/1.1)
 
 # Modules & Libraries used 
 [Janitor v1.17.0](https://github.com/howmanysmall/Janitor/tree/main) by @howmanysmall
