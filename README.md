@@ -39,8 +39,31 @@ springshaker:ShakeOnce(springshaker_test, 2)
 ```
 This code will pull out a small explosion / vibration feeling on your camera for around two seconds. 
 
-## Desmos testing
-[Desmos Link](https://www.desmos.com/calculator/r8iharhx3y)
+# Modules & Libraries used 
+[Janitor v1.17.0](https://github.com/howmanysmall/Janitor/tree/main)
 
-## Small notes (FOR BEGINNERS!)
-**This module cannot be used on SERVER. Therefore, you either run this by using [Remotes](https://create.roblox.com/docs/reference/engine/classes/RemoteEvent), if you want to connect it to CLIENTS.**
+# Benchmarking & Testing
+For intuitive research, here's the graph, accumulated by me: [Desmos Demonstration](https://www.desmos.com/calculator/r8iharhx3y)
+
+# API 
+## springshaker.lua
+### CONSTRUCTOR (SpringShaker)
+| Enums | Returns | Description |
+| --- | --- | --- |
+| `__PresetMap` | {...} | Returns the array of Presets, which can be used on the function of :GetPreset() |
+
+| Functions | Parameters | Returns | Description | Recommended to run? |
+| --- | --- | --- | --- | --- |
+| .new() | `BuiltIn._camShakePreset` | `__SpringShakerClassDef` | Builds a new constructor class and returns a valid mathematical table, that can be used by general functions ahead.| **Yes (if not using :GetPreset()** |
+| :GetPreset() | `PresetName: string` | `__SpringShakerClassDef` | Returns a preset found from the preset table. You can use this preset for general functions, without building the new constructor class.| **Yes (if not using .new())** |
+| :Start() | `__SpringShakerClassDef` | `null` | A function that starts the method to update the camera rendering, and management of renovating it. | **No** |
+| :Halt() | `__SpringShakerClassDef` | `null` | Forces a specific shaker class to stop functioning, but does not delete it. | **Optional** |
+| :HaltAll() |`FadeOutTime: number` | `null` | Forces every single shaker class to stop functioning, but does not delete it. | **Optional** |
+| :RecycleAll() | No parameters. | `null` | Garbage cleans every single shaker class and empties memory | **Optional** |
+| :HaltDurationWise() | Time: number | `null` | Optional fadeout duration for overriding. | **Optional. Recommended for :Shake()** |
+| :UpdateAll() | dx: number | `CFrame` | Internal core loop that calculates every single combined CFrame of active springs. | **No** | 
+| :Recycle() | `__SpringShakerClass` | Garbage cleans a specific shaker class and empties memory hash of it | **Optional** |
+| :Append() |`__SpringShakerClass` | Adds a specific shaker class for the overall memory. | **No** | 
+| :ShakeSustained() | `__SpringShakerClassDef` | () -> CFrame | Starts a shake that lasts until manually stopped | **Yes, after you run .new() or :GetPreset()** |
+| :ShakeOnce() | `__SpringShakeClassDef, Duration: number` | `null` | Plays a shake once, for unhandled situations. | **Yes, after you run .new() or :GetPreset()** |
+
