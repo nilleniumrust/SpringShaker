@@ -47,7 +47,7 @@ This code will pull out a small explosion / vibration feeling on your camera for
 For intuitive research, here's the graph, accumulated by me: [Desmos Demonstration](https://www.desmos.com/calculator/r8iharhx3y)
 
 # API 
-## springshaker.lua
+## [springshaker.lua](https://github.com/nilleniumrust/CameraShaker-optimized/blob/main/springshaker/springshaker.lua)
 ### CONSTRUCTOR (SpringShaker)
 | Enums | Returns | Description |
 | --- | --- | --- |
