@@ -119,7 +119,7 @@ Before 5 seconds, the code will be triggered and a feel of an Earthquake will be
 * **<code>⚠ NOTE</code>**: This is directly linked to `SpringShakerPresets & BuiltIn.__camShakePreset`. BuiltIn.__camShakePreset has the same export type as this, but the Shaker class gets out-edited more (thus, meaning that it has more artifical adds, that are not in the export type)
 
 ## [shakerinstances.lua](https://github.com/nilleniumrust/CameraShaker-optimized/blob/main/springshaker/shakerinstances.lua)
-### COSNTRUCTOR (ShakerInstances) 
+### CONSTRUCTOR (ShakerInstances) 
 ### Not recommended or required to run. This module is the **backbone** of springshaker.lua.
 
 | Functions | Parameters | Description |
