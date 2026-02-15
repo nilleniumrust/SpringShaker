@@ -40,7 +40,7 @@ springshaker:ShakeOnce(springshaker_test, 2)
 This code will pull out a small explosion / vibration feeling on your camera for around two seconds. 
 
 # Modules & Libraries used 
-[Janitor v1.17.0](https://github.com/howmanysmall/Janitor/tree/main)
+[Janitor v1.17.0](https://github.com/howmanysmall/Janitor/tree/main) by @howmanysmall
 
 # Benchmarking & Testing
 For intuitive research, here's the graph, accumulated by me: [Desmos Demonstration](https://www.desmos.com/calculator/r8iharhx3y)
@@ -66,4 +66,6 @@ For intuitive research, here's the graph, accumulated by me: [Desmos Demonstrati
 | :Append() |`__SpringShakerClass` | `null`| Adds a specific shaker class for the overall memory. | **No** | 
 | :ShakeSustained() | `__SpringShakerClassDef` | () -> CFrame | Starts a shake that lasts until manually stopped | **Yes, after you run .new() or :GetPreset()** |
 | :ShakeOnce() | `__SpringShakeClassDef, Duration: number` | `null` | Plays a shake once, for unhandled situations. | **Yes, after you run .new() or :GetPreset()** |
+
+
 
