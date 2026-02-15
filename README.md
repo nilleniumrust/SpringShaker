@@ -89,7 +89,7 @@ For intuitive research, here's the graph, accumulated by me: [Desmos Demonstrati
 | :ShakeSustained() | `__SpringShakerClassDef` | () -> CFrame | Starts a shake that lasts until manually stopped | **Yes, after you run .new() or :GetPreset()** |
 | :ShakeOnce() | `__SpringShakeClassDef, Duration: number` | `null` | Plays a shake once, for unhandled situations. | **Yes, after you run .new() or :GetPreset()** |
 
-## shakerinstances.lua 
+## [shakerinstances.lua](https://github.com/nilleniumrust/CameraShaker-optimized/blob/main/springshaker/shakerinstances.lua)
 ### COSNTRUCTOR (ShakerInstances) 
 ### Not recommended or required to run. This module is the **backbone** of springshaker.lua.
 
