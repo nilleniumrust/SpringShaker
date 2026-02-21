@@ -1,4 +1,8 @@
+
+<img width="1080" height="720" alt="springshaker-logo2(1)" src="https://github.com/user-attachments/assets/16b0b721-119f-49f6-8184-118c1f2dd850"/>
+
 # SpringShaker
+
 
 > A physics-based camera shaker for Roblox built on a damped harmonic oscillator — giving shakes real weight, momentum, and natural decay.
 
@@ -18,7 +22,9 @@ Traditional camera shakers scale Perlin noise by a fade envelope and call it a d
 SpringShaker = "nilleniumrust/springshaker@1.1.1"
 ```
 
-> ⚠️ SpringShaker is **client-only**. Do not place it in server-side DataModel services.
+
+> [!IMPORTANT]
+> SpringShaker is **client-only**. Do not place it in server-side DataModel services.
 
 ---
 
@@ -70,6 +76,9 @@ local mortar = SpringShaker.new({
 SpringShaker:ShakeOnce(mortar)
 ```
 
+> [!TIP]
+> Did you know SpringShaker is reusable when shakes end?
+
 | Parameter | Type | Description |
 | --- | --- | --- |
 | Magnitude | number | Scale of the entire shake. Acts as amplitude. |
@@ -80,7 +89,8 @@ SpringShaker:ShakeOnce(mortar)
 | Damping | number | Resistance to oscillation — higher values = quicker ring-down. |
 | RotationInfluence | Vector3 | Per-axis rotation multiplier (pitch, yaw, roll). |
 
-> ⚠️ Do not set Magnitude above `10^5`. This risks [Resonance](https://en.wikipedia.org/wiki/Resonance) — SpringShaker will abort and warn if detected.
+> [!WARNING]
+>  Do not set Magnitude above `10^5`. Doing so will cause [Resonance](https://en.wikipedia.org/wiki/Resonance). However, if activated SpringShaker will abort the Spring instance and reset itself.
 
 ---
 
@@ -139,7 +149,8 @@ SpringShaker is the most physics-complete of the three at the cost of being the 
 
 SpringShaker uses more peak memory due to richer physics state per instance, but releases everything completely on recycle. RbxCameraShaker retains ~925KB after GC consistently across multiple runs.
 
-> ⚠️ SpringShaker has been stress tested up to 1,000,000 simultaneous instances. Please do not do this. 1–25 is a sensible maximum for any real game.
+> [!NOTE]
+>  SpringShaker has been stress tested up to 1,000,000 simultaneous instances. Please do not do this. 1–25 is a sensible maximum for any real game.
 
 ---
 
