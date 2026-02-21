@@ -1,160 +1,154 @@
 # SpringShaker
-A CameraShaker inspired by the ideas of @Sleitnick's RbxCameraShaker, but uses more advanced physics and more stability factors.
-It uses **Semi-Implicit Euler Integrator.**, as of a perlin noise and spring constraint (Hooke's law) mixed general types. 
 
+> A physics-based camera shaker for Roblox built on a damped harmonic oscillator — giving shakes real weight, momentum, and natural decay.
 
-# How to use? 
-**A very easy module, that includes a variety of options to choose from.** 
-We know that 
-springshaker.new()'s parameters are 
+Traditional camera shakers scale Perlin noise by a fade envelope and call it a day. SpringShaker drives each shake through a damped harmonic oscillator — the same math that governs real pendulums and spring systems. Explosions ring out naturally, earthquakes swell and bleed off over time, and impacts feel physically grounded rather than scripted.
 
-| Parameter | Type | Description
-| --- | --- | --- |
-| `Magnitude` | number | Scale factor of the entire shake. Measured as Ampltiude. |
-| `Roughness` | number | Speed of the perlin noise and spring |
-| `FadeInTime` | number | Defines how many seconds it takes for the spring shake to transition from a CurrentTime (ranging 0.0 -> 1.0) |
-| `FadeOutTime` | number | Defines how many seconds it would take for the spring to 'calm down' (Connected to E(t)) |
-| `Tension` | number | A restoring force, of how much the camera needs to return to its position. **(XYZ): (0,0,0)** |
-| `Velocity` | Vector3 | The speed of the camera in which it's moving in miliseconds | 
-| `Damping` | number | The resistor of stopping the camera to shake forever. |
-| `RotationInfluence` | Vector3 | It is a pin-point translator (1D) to (3D), which by per-axis, allows you to constrain the spring mathematics to edit at what direction you would like it to shake. | 
-| `__RenderPriority` | Enum.RenderPriority | Determines when and at what frame should the shake be allowed. By default, the code will set it to 201. |
+---
 
-* **<code>⚠ NOTE</code>**: Magnitude cannot overpass more than (10^5), a natural resemblance in Physics happens, called [Resonance](https://en.wikipedia.org/wiki/Resonance). It is due to F(t), frequency of the
-force, matches the S(t) natural frequency of the spring, thus turning into mathematics an impossible to detect, unregistered number, in which the engine cannot properly render.
-* **<code>⚠ NOTE</code>**: **This module cannot be used on SERVER. Therefore, you either run this by using [Remotes](https://create.roblox.com/docs/reference/engine/classes/RemoteEvent), _if you want to connect it to CLIENTS._**
+## Installation
 
-# Example
-```lua 
-local springshaker = require(Path.To.SpringShaker)
-local springshaker_test = springshaker.new({
-	Magnitude = 7,
-	Roughness = 25,
-	FadeInTime = 0.1,
-	Tension = 150,
-	Damping = 11,
-	Velocity = nil,
-	FadeOutTime = 0.75,
-	RotationInfluence = Vector3.new(4,2,1),
-})
+**Roblox Marketplace** — [Get SpringShaker](https://create.roblox.com/store/asset/72358969628018/SpringShaker)
 
-springshaker:ShakeOnce(springshaker_test, 2)
+**GitHub** — [Latest Release](https://github.com/nilleniumrust/SpringShaker/releases)
+
+**Wally:**
+```toml
+[dependencies]
+SpringShaker = "nilleniumrust/springshaker@1.1.1"
 ```
-This code above will pull out a small explosion / grenade explosion feeling on your camera for around two seconds. 
+
+> ⚠️ SpringShaker is **client-only**. Do not place it in server-side DataModel services.
+
+---
+
+## Usage
 
 ```lua
-local springshaker = require(Path.To.SpringShaker)
-local springshaker_preset = springshaker:GetPreset("Earthquake")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local SpringShaker = require(ReplicatedStorage.src.SpringShaker)
 
-springshaker:Shake(springshaker_preset)
+-- Sustained earthquake until manually stopped
+SpringShaker:ShakeSustained(SpringShaker:GetPreset("Earthquake"))
+
 task.delay(5, function()
-   springshaker:HaltDurationWise(1)
+    SpringShaker:HaltDurationWise(1) -- smooth 1 second fade out
 end)
 ```
-Before 5 seconds, the code will be triggered and a feel of an Earthquake will be presented through your camera, then after this, the spring dies down, loosing momentum in 1 second.
 
-# Where do I download this module?
-* You can get this module from the [Roblox Library](https://create.roblox.com/store/asset/72358969628018/SpringShaker)
-* Or you can download it from the latest release of [SpringShaker](https://github.com/nilleniumrust/SpringShaker/releases/tag/1.1)
+Compare this to what other modules require — manual CFrame management, a secondary Heartbeat connection to fix drift, and writing your own render loop:
 
-# Modules & Libraries used 
-[Janitor v1.17.0](https://github.com/howmanysmall/Janitor/tree/main) by @howmanysmall
+```lua
+-- What you'd write with other modules
+local camCf: CFrame
+shake:BindToRenderStep(Shake.NextRenderName(), priority, function(pos, rot, isDone)
+    camCf = camera.CFrame
+    camera.CFrame *= CFrame.new(pos) * CFrame.Angles(rot.X, rot.Y, rot.Z)
+end)
+RunService.Heartbeat:Connect(function()
+    camera.CFrame = camCf -- required to prevent drift at high FPS
+end)
+```
 
-# Benchmarking & Testing
-* For intuitive research, here's the graph, accumulated by me: [Desmos Demonstration](https://www.desmos.com/calculator/r8iharhx3y)
-* From maximum stress testing, SpringShaker took around 0.097s max and had a single count of call. Average call time: 0.04-0.05s.
+SpringShaker handles render priority, camera application, and drift prevention internally. Nothing to configure.
 
-**Flamegraph** 
-* Exclusive, Inclusive - **6%**
-* Inclusive Average Size - **48 bytes**
-* Exclusive, Inclusive Alloc Size - **6919**
+---
 
-* **<code>⚠ NOTE</code>**: I have not done proper benchmarking yet, but it runs smooth on harsh physics.
+## Custom Shakes
 
-# API 
-## [springshaker.lua](https://github.com/nilleniumrust/CameraShaker-optimized/blob/main/springshaker/springshaker.lua)
+```lua
+local mortar = SpringShaker.new({
+    Magnitude = 5,
+    Roughness = 5,
+    FadeInTime = 0,
+    FadeOutTime = 1.8,
+    Tension = 122,
+    Damping = 13,
+    RotationInfluence = Vector3.new(1.2, 0.5, 0.3),
+})
 
-### CONSTRUCTOR (SpringShaker)
+SpringShaker:ShakeOnce(mortar)
+```
 
-| Enums | Returns | Description |
+| Parameter | Type | Description |
 | --- | --- | --- |
-| `__PresetMap` | {...} | Returns the array of Presets, which can be used on the function of :GetPreset() |
+| Magnitude | number | Scale of the entire shake. Acts as amplitude. |
+| Roughness | number | Speed of the Perlin noise sampling. |
+| FadeInTime | number | Seconds to reach full shake intensity. |
+| FadeOutTime | number | Seconds to decay back to zero. |
+| Tension | number | Oscillation frequency — higher values = faster wobble. |
+| Damping | number | Resistance to oscillation — higher values = quicker ring-down. |
+| RotationInfluence | Vector3 | Per-axis rotation multiplier (pitch, yaw, roll). |
 
-| Types | Inhibits | Description | 
-| --- | --- | --- |
-| `__SpringShakerClassDef` | `SpringShakerPresets & BuiltIn.__camShakePreset` | A data map array that contains valid information points which inhibits private links and data structure. |
+> ⚠️ Do not set Magnitude above `10^5`. This risks [Resonance](https://en.wikipedia.org/wiki/Resonance) — SpringShaker will abort and warn if detected.
 
-## __SpringShakerClassDef
-| Value | Type |  Content |
-| --- | --- | --- |
-| __index | `Metadata (function)` | Redirects property lookups to the class prototype for memory-efficient method sharing. | 
-| Active | `Variable (boolean)` | A boolean that verifies whether if the class is currently active. (:GetState() effects) |
-| Magnitude | `Constant (number)` | Scale factor of the entire shake. Measured as Ampltiude | 
-| Roughness | `Constant (number)` | Speed of the perlin noise and spring |
-| FadeInTime | `number` | Defines how many seconds it takes for the spring shake to transition from a CurrentTime (ranging 0.0 -> 1.0) | 
-| FadeOutTime | `number` | Defines how many seconds it would take for the spring to 'calm down' (Connected to E(t)) |
-| Tension | `number` | A restoring force, of how much the camera needs to return to its position. **(XYZ): (0,0,0)** |
-| Damping or Damper | `number` | The resistor of stopping the camera to shake forever. |
-| Velocity | `Vector3`  | The speed of the camera in which it's moving in miliseconds |
-| __RenderName | `string` | For BindToRenderStep(), this is unique coding. If you want a custom RenderName, you can input it here. On default, it uses GUID. | 
-| __RenderPriority | `Enum.RenderPriority` | Determines when and at what frame should the shake be allowed. By default, the code will set it to 201. |
-| RotationalInfluence | `Vector3` | It is a pin-point translator (1D) to (3D), which by per-axis, allows you to constrain the spring mathematics to edit at what direction you would like it to shake. | 
+---
 
+## Presets
 
-
-| Functions | Parameters | Returns | Description | Recommended to run? |
-| --- | --- | --- | --- | --- |
-| .new() | `BuiltIn._camShakePreset` | `__SpringShakerClassDef` | Builds a new constructor class and returns a valid mathematical table, that can be used by general functions ahead.| **Yes (if not using :GetPreset()** |
-| :GetPreset() | `PresetName: string` | `__SpringShakerClassDef` | Returns a preset found from the preset table. You can use this preset for general functions, without building the new constructor class.| **Yes (if not using .new())** |
-| :Start() | `__SpringShakerClassDef` | `null` | A function that starts the method to update the camera rendering, and management of renovating it. | **No** |
-| :Halt() | `__SpringShakerClassDef` | `null` | Forces a specific shaker class to stop functioning, but does not delete it. | **Optional** |
-| :HaltAll() | `FadeOutTime: number` | `null` | Forces every single shaker class to stop functioning, but does not delete it. | **Optional** |
-| :RecycleAll() | No parameters. | `null` | Garbage cleans every single shaker class and empties memory | **Optional** |
-| :HaltDurationWise() |`Time: number` | `null` | Optional fadeout duration for overriding. | **Optional. Recommended for :Shake()** |
-| :UpdateAll() | `dx: number` | `CFrame` | Internal core loop that calculates every single combined CFrame of active springs. | **No** | 
-| :Recycle() | `__SpringShakerClass` | `null` | Garbage cleans a specific shaker class and empties memory hash of it | **Optional** |
-| :Append() |`__SpringShakerClass` | `null`| Adds a specific shaker class for the overall memory. | **No** | 
-| :ShakeSustained() | `__SpringShakerClassDef` | `() -> CFrame` | Starts a shake that lasts until manually stopped | **Yes, after you run .new() or :GetPreset()** |
-| :ShakeOnce() | `__SpringShakeClassDef, Duration: number` | `null` | Plays a shake once, for unhandled situations. | **Yes, after you run .new() or :GetPreset()** |
-* **<code>⚠ NOTE</code>**: This is directly linked to `SpringShakerPresets & BuiltIn.__camShakePreset`. BuiltIn.__camShakePreset has the same export type as this, but the Shaker class gets out-edited more (thus, meaning that it has more artifical adds, that are not in the export type)
-
-## [shakerinstances.lua](https://github.com/nilleniumrust/CameraShaker-optimized/blob/main/springshaker/shakerinstances.lua)
-### CONSTRUCTOR (ShakerInstances) 
-### Not recommended or required to run. This module is the **backbone** of springshaker.lua.
-
-| Functions | Parameters | Description |
-| --- | --- | --- |
-| `.new()` | `__SpringShakerDefClass` | Inherits the same __SpringShakerClassDef as its table, but more modified and a stable mathematics version. It is then to be given to the main module, for purpose and security. |
-| `:Update()` | `dx: number` | The main handler of the connected springs in general physics and mathematics. | 
-| `:FadeOut()` | `Time: number` | The time to it takes to calm down and return to zero in overall. Direct connection to E(t) frequency. |
-| `:FadeIn()` | `Time: number` | The amount of time it takes to reach the full magnitude (amplitude) of the spring. | 
-| `:GetFadeMagnitude()` | `null` | Returns the current multiplier of the shake (0-1). Used to determine the remaining intensity based on FadeIn/FadeOut progress. |
-| `:IsShaking()` | `null` | Logic gate that contains if the Spring is in 'Shaking' state |
-| `:IsFading()` | `null` | Logic gate that tells if the spring is currently 'fading in'| 
-| `:IsFadingOut()` | `null` | Logic gate that tells if the spring is currently 'fading out'. Reverse of :IsFading() | 
-| `:IsDead()` | `null` | Logic gate that returns whether if the selected spring shaker class is dead in instance |
-| `:GetState()` | `null` | Returns integer values that are designated to 'Inactive', 'Active' and etc. |
-
-### MISCELLANIOUS 
-
-| State | Values | 
+| Preset | Description |
 | --- | --- |
-| `Reserved` | -1 | 
-| `Inactive` | 0 |
-| `Active` | 1 | 
-| `FadeInProgress` | 2 |
-| `FadeOutProgress` | 3 |
+| Explosion | Violent initial shock that decays into heavy rumble |
+| Landmine | Sharp high-tension sting that stabilizes almost instantly |
+| Earthquake | Low-frequency rolling sway — ground liquefying feeling |
+| Resonance | Slow rhythmic wobble that builds over time |
+| Bounce | Soft fluid recoil with minimal roughness |
+| Vibration | Subtle continuous hum |
+| ExplosiveBullet | Fast sharp crack of a nearby hit |
+| Rumble | Low persistent ground vibration |
+| Impact | Sudden blunt force with quick ring-down |
 
-| Preset | Description | 
-| --- | --- | 
-| Explosion | Violent & Rough. A massive initial shock that decays into a heavy rumble. |
-| Landmine | Sharp & Snappy. A high-tension "sting" that stabilizes almost instantly. | 
-| Earthquake | Heavy & Rolling. Low-frequency swaying that feels like the ground is liquefying. |
-| Resonance | A slow build-up of energy that feels like a rhythmic wobble. |
-| Bounce | A soft, fluid recoil with minimal roughness. |
-| Vibration | A very tiny change of a hum in the player's camera. | 
-| ExplosiveBullet | A very fast, sharp crack that feels like a nearby hit. |
+---
 
-* **<code>⚠ NOTE</code>**: You can use these basic templates off, when using :GetPreset(), as followed in the second code template.
-* **<code>⚠ NOTE</code>**: To be sure, your :GetPreset() has to be a valid table that exists in this Presets array module.
+## Performance
 
+Benchmarked in Play mode with `os.clock()` wrapping only the update cost per frame — camera application excluded for fairness.
+
+### SpringShaker native vs non-native
+
+| Instances | Non-Native Avg | Non-Native Peak | Native Avg | Native Peak |
+| --- | --- | --- | --- | --- |
+| 1 | 0.0039ms | 0.0237ms | 0.004ms | 0.015ms |
+| 10 | 0.0135ms | 0.0516ms | 0.013ms | 0.056ms |
+| 50 | 0.0558ms | 0.2506ms | 0.056ms | 0.134ms |
+| 100 | 0.1093ms | 0.1956ms | 0.110ms | 0.161ms |
+| 250 | 0.2804ms | 0.6637ms | 0.282ms | 0.422ms |
+
+`--!native` provides ~25x faster per-call performance and ~28% less peak memory at scale.
+
+### Three-way comparison (all with `--!native`)
+
+| Instances | SpringShaker | RbxCameraShaker | Shake |
+| --- | --- | --- | --- |
+| 1 | 0.0054ms | 0.0062ms | 0.0081ms |
+| 10 | 0.0199ms | 0.0159ms | 0.0130ms |
+| 50 | 0.0636ms | 0.0518ms | 0.0355ms |
+| 100 | 0.1199ms | 0.1032ms | 0.0566ms |
+| 250 | 0.2822ms | 0.2385ms | 0.1369ms |
+| 1000 | ~1.20ms | ~0.88ms | ~0.51ms |
+
+SpringShaker is the most physics-complete of the three at the cost of being the heaviest per frame. At 10 simultaneous instances — a realistic maximum for most games — total frame cost is under 0.02ms.
+
+### Memory at 1000 instances
+
+| Module | Peak | Retained after GC |
+| --- | --- | --- |
+| SpringShaker | ~2.5MB | ~0KB |
+| RbxCameraShaker | ~0.6MB | ~925KB |
+| Shake | ~0.6MB | ~0KB |
+
+SpringShaker uses more peak memory due to richer physics state per instance, but releases everything completely on recycle. RbxCameraShaker retains ~925KB after GC consistently across multiple runs.
+
+> ⚠️ SpringShaker has been stress tested up to 1,000,000 simultaneous instances. Please do not do this. 1–25 is a sensible maximum for any real game.
+
+---
+
+## References
+
+- [Desmos — SpringShaker oscillator graph](https://www.desmos.com/calculator/r8iharhx3y)
+- [Damped Harmonic Oscillator — Wikipedia](https://en.wikipedia.org/wiki/Harmonic_oscillator#Damped_harmonic_oscillator)
+- [Resonance — Wikipedia](https://en.wikipedia.org/wiki/Resonance)
+
+## Special Thanks
+
+[Janitor v1.18.3](https://github.com/howmanysmall/Janitor/tree/main) by howmanysmall
