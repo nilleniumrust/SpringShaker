@@ -1,15 +1,12 @@
 [package]
 name = "nilleniumrust/springshaker"
-author = ["Nillenium Rust <nilleniumrust@gmail.com>"]
 description = "A camera shaker that uses springs + perlin noise for advanced mathematical calculations, which combine smoothness and efficiency."
-license = "apache 2.0"
 version = "1.1.1"
 registry = "https://github.com/UpliftGames/wally-index"
 realm = "shared"
+license = "Apache-2.0"
+authors = ["Nillenium Rust <nilleniumrust@gmail.com>"]
 
 [dependencies]
-janitor = "howmanysmall/janitor@1.18.3"
+Janitor = "howmanysmall/janitor@1.18.3"
 Promise = "howmanysmall/typed-promise@4.0.3"
-
-[place] 
-shared-packages = "src/Packages"
