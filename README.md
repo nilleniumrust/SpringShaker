@@ -3,7 +3,7 @@
 <img src="https://img.shields.io/badge/Docs-View_Site-brightgreen?style=for-the-badge&logo=googledocs&logoColor=white&labelColor=222222" alt="Documentation"></a>
 
 <a href="https://wally.run/package/nilleniumrust/springshaker">
-<img src="https://img.shields.io/badge/Wally-v1.1.1-00A2FF?style=for-the-badge&logo=roblox&logoColor=white&labelColor=222222" alt="Wally Version"></a>
+<img src="https://img.shields.io/badge/Wally-v1.1.2-00A2FF?style=for-the-badge&logo=roblox&logoColor=white&labelColor=222222" alt="Wally Version"></a>
 
 <a href="https://github.com/nilleniumrust/springshaker/releases">
 <img src="https://img.shields.io/github/v/release/nilleniumrust/springshaker?style=for-the-badge&logo=github&logoColor=white&labelColor=222222&color=orange" alt="Releases"></a>
