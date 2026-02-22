@@ -32,30 +32,30 @@ type CamShakeInstance = Batch.CamShakeStates
     @return __SpringShakerClassMeta
 ]=]
 function ShakerInstances.new(__SpringShakeDefClass)
-    assert(__SpringShakeDefClass, "__SpringShakeDefClass must be of a new constructor class")
+	assert(__SpringShakeDefClass, "__SpringShakeDefClass must be of a new constructor class")
 
-    local INITIATOR_COMPOUND = setmetatable({
-        Magnitude = __SpringShakeDefClass.Magnitude or 0.4,
-        Roughness = __SpringShakeDefClass.Roughness or 0.2,
-        FadeInTime = __SpringShakeDefClass.FadeInTime or 0,
-        FadeOutTime = __SpringShakeDefClass.FadeOutTime or 0,
-        Velocity = __SpringShakeDefClass.Velocity or Vector3.zero,
-        Tension = __SpringShakeDefClass.Tension or 150,
-        Damper = __SpringShakeDefClass.Damping or 1,
-        PositionInfluence = __SpringShakeDefClass.PosInflux or __SpringShakeDefClass.PositionInfluence or Vector3.zero,
-        RotationInfluence = __SpringShakeDefClass.RotInflux or __SpringShakeDefClass.RotationInfluence or Vector3.one,
-        Elapsed = 0,
-        RawTime = 0,
-        SustainComplex = true,
-        FadeOutElapsed = 0,
-        Position = Vector3.zero,
-        CurrentTime = (__SpringShakeDefClass.FadeInTime > 0 and 0 or 1),
-        Active = true,
-        Tick = Random:NextInteger(-100, 100),
-        State = Batch.BuildInPresets.__camShakeStates.Active,
-    }, ShakerInstances)
+	local INITIATOR_COMPOUND = setmetatable({
+		Magnitude = __SpringShakeDefClass.Magnitude or 0.4,
+		Roughness = __SpringShakeDefClass.Roughness or 0.2,
+		FadeInTime = __SpringShakeDefClass.FadeInTime or 0,
+		FadeOutTime = __SpringShakeDefClass.FadeOutTime or 0,
+		Velocity = __SpringShakeDefClass.Velocity or Vector3.zero,
+		Tension = __SpringShakeDefClass.Tension or 150,
+		Damper = __SpringShakeDefClass.Damping or 1,
+		PositionInfluence = __SpringShakeDefClass.PosInflux or __SpringShakeDefClass.PositionInfluence or Vector3.zero,
+		RotationInfluence = __SpringShakeDefClass.RotInflux or __SpringShakeDefClass.RotationInfluence or Vector3.one,
+		Elapsed = 0,
+		RawTime = 0,
+		SustainComplex = true,
+		FadeOutElapsed = 0,
+		Position = Vector3.zero,
+		CurrentTime = (__SpringShakeDefClass.FadeInTime > 0 and 0 or 1),
+		Active = true,
+		Tick = Random:NextInteger(-100, 100),
+		State = Batch.BuildInPresets.__camShakeStates.Active,
+	}, ShakerInstances)
 
-    return INITIATOR_COMPOUND
+	return INITIATOR_COMPOUND
 end
 
 --[=[
@@ -80,53 +80,49 @@ end
     @return Vector3 -- The current position offset to accumulate onto the camera
 ]=]
 function ShakerInstances:Update(dx)
-    if not self.Active or not self.Position then
-        return Vector3.zero
-    end
+	if not self.Active or not self.Position then
+		return Vector3.zero
+	end
+	dx = math.min(dx, 0.033)
 
-    if self.SustainComplex then
-        local rate = (self.FadeInTime > 0) and (dx / self.FadeInTime) or 1
-        self.CurrentTime = math.min(1, self.CurrentTime + rate)
-    else
-        local rate = (self.FadeOutTime > 0) and (dx / self.FadeOutTime) or 1
-        self.CurrentTime = math.max(0, self.CurrentTime - rate)
-        self.FadeOutElapsed = self.FadeOutElapsed + dx
-    end
+	if self.SustainComplex then
+		local rate = (self.FadeInTime > 0) and (dx / self.FadeInTime) or 1
+		self.CurrentTime = math.min(1, self.CurrentTime + rate)
+	else
+		local rate = (self.FadeOutTime > 0) and (dx / self.FadeOutTime) or 1
+		self.CurrentTime = math.max(0, self.CurrentTime - rate)
+	end
 
-    local energy = math.pow(self.CurrentTime, 3)
+	local energy = math.pow(self.CurrentTime, 3)
+	self.Elapsed = self.Elapsed + (dx * self.Roughness)
+	local _t = self.Elapsed + self.Tick
 
-    self.Elapsed = self.Elapsed + (dx * self.Roughness)
-    self.RawTime = (self.RawTime or 0) + dx
+	local rumble = Vector3.new(math.noise(_t, 10.5), math.noise(_t, 25.5), math.noise(_t, 40.5))
+	local jitter = Vector3.new(math.noise(_t * 5, 70.5), math.noise(_t * 5, 85.5), math.noise(_t * 5, 100.5)) * 0.3
 
-    local _t = self.Elapsed + self.Tick
+	local combinedForce = (rumble + jitter) * (self.Magnitude * energy)
 
-    local rumble = Vector3.new(math.noise(_t, 10.5), math.noise(_t, 25.5), math.noise(_t, 40.5))
+	local displacement = self.Position - combinedForce
+	local clampedDisplacement = Vector3.new(
+		math.clamp(displacement.X, -2, 2),
+		math.clamp(displacement.Y, -2, 2),
+		math.clamp(displacement.Z, -2, 2)
+	)
 
-    local jitter = Vector3.new(math.noise(_t * 4, 70.5), math.noise(_t * 4, 85.5), math.noise(_t * 4, 100.5)) * 0.3
+	local springForce = -self.Tension * clampedDisplacement
+	local dampingForce = -self.Damper * self.Velocity
 
-    local F = (rumble + jitter) * self.Magnitude
+	self.Velocity += (springForce + dampingForce) * dx
+	self.Position += self.Velocity * dx
 
-    local decayRate = (self.FadeOutTime > 0) and (4 / self.FadeOutTime) or 8
-    local decay = self.SustainComplex and 1 or math.exp(-decayRate * self.FadeOutElapsed)
-    local oscillation = math.cos(math.sqrt(self.Tension) * self.RawTime)
-    local stabilizer = oscillation * decay
+	if self.Position.X ~= self.Position.X or self.Position.Magnitude > 10 ^ 5 then
+		warn("SpringShake: Massive resonance detected, aborting...")
+		self.Position = Vector3.zero
+		self.Velocity = Vector3.zero
+		return Vector3.zero
+	end
 
-    self.Position = F * stabilizer * energy
-
-    -- Guard against NaN or resonance explosion
-    if self.Position.X ~= self.Position.X or self.Position.Magnitude > 10 ^ 5 then
-        warn("SpringShake: Massive resonance detected, aborting...")
-        self.Position = Vector3.zero
-        return Vector3.zero
-    end
-
-    self.Position = Vector3.new(
-        math.clamp(self.Position.X, -5, 5),
-        math.clamp(self.Position.Y, -5, 5),
-        math.clamp(self.Position.Z, -5, 5)
-    )
-
-    return self.Position
+	return self.Position
 end
 
 --[=[
@@ -137,15 +133,15 @@ end
     @param Time number -- Duration in seconds. Pass 0 for an immediate stop.
 ]=]
 function ShakerInstances:FadeOut(Time: number)
-    assert(Time, "given time was not found and failed to set fadeout")
-    if Time == 0 then
-        self.CurrentTime = 0
-    end
+	assert(Time, "given time was not found and failed to set fadeout")
+	if Time == 0 then
+		self.CurrentTime = 0
+	end
 
-    self.FadeOutElapsed = 0
-    self.FadeOutTime = Time
-    self.FadeInTime = 0
-    self.SustainComplex = false
+	self.FadeOutElapsed = 0
+	self.FadeOutTime = Time
+	self.FadeInTime = 0
+	self.SustainComplex = false
 end
 
 --[=[
@@ -155,14 +151,14 @@ end
     @param Time number -- Duration in seconds. Pass 0 to start at full magnitude immediately.
 ]=]
 function ShakerInstances:FadeIn(Time: number)
-    assert(Time, "given time was not found and failed to set fadein")
-    if Time == 0 then
-        self.CurrentTime = 1
-    end
+	assert(Time, "given time was not found and failed to set fadein")
+	if Time == 0 then
+		self.CurrentTime = 1
+	end
 
-    self.FadeOutTime = 0
-    self.FadeInTime = Time
-    self.SustainComplex = true
+	self.FadeOutTime = 0
+	self.FadeInTime = Time
+	self.SustainComplex = true
 end
 
 --[=[
@@ -173,7 +169,7 @@ end
     @return number
 ]=]
 function ShakerInstances:GetFadeMagnitude(): number
-    return math.pow(self.CurrentTime, 3)
+	return math.pow(self.CurrentTime, 3)
 end
 
 --[=[
@@ -182,8 +178,8 @@ end
     @return boolean
 ]=]
 function ShakerInstances:IsShaking(): boolean
-    local curTime = self.CurrentTime or 0
-    return (curTime > 0 or self.SustainComplex == true)
+	local curTime = self.CurrentTime or 0
+	return (curTime > 0 or self.SustainComplex == true)
 end
 
 --[=[
@@ -192,8 +188,8 @@ end
     @return boolean
 ]=]
 function ShakerInstances:IsFadingOut(): boolean
-    local curTime = self.CurrentTime or 0
-    return (not self.SustainComplex) and (curTime > 0)
+	local curTime = self.CurrentTime or 0
+	return (not self.SustainComplex) and (curTime > 0)
 end
 
 --[=[
@@ -202,9 +198,9 @@ end
     @return boolean
 ]=]
 function ShakerInstances:IsFading(): boolean
-    local curTime = self.CurrentTime or 0
-    local fadeIn = self.FadeInTime or 0
-    return (curTime < 1) and (self.SustainComplex == true) and (fadeIn > 0)
+	local curTime = self.CurrentTime or 0
+	local fadeIn = self.FadeInTime or 0
+	return (curTime < 1) and (self.SustainComplex == true) and (fadeIn > 0)
 end
 
 --[=[
@@ -215,14 +211,14 @@ end
     @return boolean
 ]=]
 function ShakerInstances:IsDead(): boolean
-    if not self.Position then
-        return true
-    end
+	if not self.Position then
+		return true
+	end
 
-    local curTime = self.CurrentTime or 0
-    local isSettled = self.Position.Magnitude < 0.001 and (self.Velocity and self.Velocity.Magnitude < 0.001 or true)
+	local curTime = self.CurrentTime or 0
+	local isSettled = self.Position.Magnitude < 0.001 and (self.Velocity and self.Velocity.Magnitude < 0.001 or true)
 
-    return (not self.SustainComplex) and (curTime <= 0) and isSettled
+	return (not self.SustainComplex) and (curTime <= 0) and isSettled
 end
 
 --[=[
@@ -239,19 +235,19 @@ end
     @return number
 ]=]
 function ShakerInstances:GetState(): number
-    if self:IsShaking() then
-        return Batch.BuildInPresets.__camShakeStates.Active
-    end
+	if self:IsShaking() then
+		return Batch.BuildInPresets.__camShakeStates.Active
+	end
 
-    if self:IsFadingOut() then
-        return Batch.BuildInPresets.__camShakeStates.FadeOutProgress
-    end
+	if self:IsFadingOut() then
+		return Batch.BuildInPresets.__camShakeStates.FadeOutProgress
+	end
 
-    if self:IsFading() then
-        return Batch.BuildInPresets.__camShakeStates.FadeInProgress
-    end
+	if self:IsFading() then
+		return Batch.BuildInPresets.__camShakeStates.FadeInProgress
+	end
 
-    return Batch.BuildInPresets.__camShakeStates.Inactive
+	return Batch.BuildInPresets.__camShakeStates.Inactive
 end
 
 return ShakerInstances
