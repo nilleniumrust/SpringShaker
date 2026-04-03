@@ -37,7 +37,7 @@ Traditional camera shakers scale Perlin noise by a fade envelope and call it a d
 **Wally:**
 ```toml
 [dependencies]
-SpringShaker = "nilleniumrust/springshaker@1.1.2"
+SpringShaker = "nilleniumrust/springshaker@1.1.3"
 ```
 
 
