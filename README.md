@@ -6,7 +6,7 @@
 <img src="https://img.shields.io/badge/Devforum-Post-00A2FF?style=for-the-badge&logo=roblox&logoColor=white&labelColor=222222&color=red" alt="Devforum Post"></a>
 
 <a href="https://wally.run/package/nilleniumrust/springshaker">
-<img src="https://img.shields.io/badge/Wally-v1.1.2-00A2FF?style=for-the-badge&logo=roblox&logoColor=white&labelColor=222222" alt="Wally Version"></a>
+<img src="https://img.shields.io/badge/Wally-v1.1.3-00A2FF?style=for-the-badge&logo=roblox&logoColor=white&labelColor=222222" alt="Wally Version"></a>
 
 <a href="https://github.com/nilleniumrust/springshaker/releases">
 <img src="https://img.shields.io/github/v/release/nilleniumrust/springshaker?style=for-the-badge&logo=github&logoColor=white&labelColor=222222&color=orange" alt="Releases"></a>
