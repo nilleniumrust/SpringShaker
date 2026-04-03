@@ -9,7 +9,7 @@
 local Batch = {}
 
 --[=[
-    @type __SpringShakerClassMeta {	Magnitude: number, Roughness: number, FadeInTime: number, FadeOutTime: number, Velocity: Vector3, Tension: number, Damper: number,RotationInfluence: Vector3, Elapsed: number, SustainComplex: boolean, Position: Vector3, CurrentTime: number, Active: boolean, Tick: number, State: CamShakeStates, Update: (self: __SpringShakerClassMeta, dt: number) -> Vector3, FadeOut: (self: __SpringShakerClassMeta, time: number) -> (), FadeIn: (self: __SpringShakerClassMeta, time: number) -> (), IsShaking: (self: __SpringShakerClassMeta) -> boolean, IsFadingOut: (self: __SpringShakerClassMeta) -> boolean, IsFading: (self: __SpringShakerClassMeta) -> boolean, IsDead: (self: __SpringShakerClassMeta) -> boolean, GetState: (self: __SpringShakerClassMeta) -> number, GetFadeMagnitude: (self: __SpringShakerClassMeta) -> number}
+    @type __SpringShakerClassMeta {	Magnitude: number, Roughness: number, FadeInTime: number, FadeOutTime: number, Velocity: Vector3, Tension: number, Damper: number,RotationInfluence: Vector3, PositionInfluence: Vector3, Elapsed: number, SustainComplex: boolean, Position: Vector3, CurrentTime: number, Active: boolean, Tick: number, State: CamShakeStates, Update: (self: __SpringShakerClassMeta, dt: number) -> Vector3, FadeOut: (self: __SpringShakerClassMeta, time: number) -> (), FadeIn: (self: __SpringShakerClassMeta, time: number) -> (), IsShaking: (self: __SpringShakerClassMeta) -> boolean, IsFadingOut: (self: __SpringShakerClassMeta) -> boolean, IsFading: (self: __SpringShakerClassMeta) -> boolean, IsDead: (self: __SpringShakerClassMeta) -> boolean, GetState: (self: __SpringShakerClassMeta) -> number, GetFadeMagnitude: (self: __SpringShakerClassMeta) -> number}
     @within Batch
     Internal math state maintained per shaker instance. Not intended for direct access.
 ]=]
@@ -22,6 +22,7 @@ export type __SpringShakerClassMeta = {
 	Tension: number,
 	Damper: number,
 	RotationInfluence: Vector3,
+	PositionInfluence: Vector3,
 	Elapsed: number,
 	SustainComplex: boolean,
 	Position: Vector3,
@@ -41,7 +42,7 @@ export type __SpringShakerClassMeta = {
 }
 
 --[=[
-    @type __camShakePreset {Magnitude: number, Roughness: number, FadeInTime: number, FadeOutTime: number, Tension: number, Damping: number, Velocity: Vector3, RotationInfluence: Vector3, __RenderPriority: number}
+    @type __camShakePreset {Magnitude: number, Roughness: number, FadeInTime: number, FadeOutTime: number, Tension: number, Damping: number, Velocity: Vector3, RotationInfluence: Vector3, PositionInfluence: Vector3, __RenderPriority: number}
     @within Batch
     Configuration table passed into SpringShaker.new() or returned by :GetPreset().
 ]=]
@@ -57,6 +58,7 @@ export type __camShakePreset = {
 	__JanitorClass: any,
 	FadeOutTime: number,
 	RotationInfluence: Vector3,
+	PositionInfluence: Vector3,
 	__RenderPriority: number,
 }
 

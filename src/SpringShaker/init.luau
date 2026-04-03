@@ -118,6 +118,7 @@ function SpringShaker.new(__SpringShakeDefClass: Batch.__camShakePreset): __Spri
 		__Callback = nil,
 		_PartnerLoop = false,
 		RotationInfluence = __SpringShakeDefClass.RotationInfluence or Vector3.one,
+		PositionInfluence = __SpringShakeDefClass.PositionInfluence or Vector3.one
 	}, SpringShakerPresets)
 
 	return (INSTANTIATOR_CLASS :: Batch.__camShakePreset) :: __SpringShakerClassDef
@@ -239,10 +240,18 @@ function SpringShaker:HaltDurationWise(Time: number?)
 end
 
 --[=[
+    :::caution
+    **DO NOT USE** - NOT INTENDED FOR GENERAL USE.
+    * **SpringShaker** automatically runs this upon use!
+    :::
+
     Internal core loop that calculates the combined CFrame of all active springs.
+
+    @since v1.1
     @param dx number -- Delta time taken from each frames. Average (0.016 for 60fps).
-    @return CFrame?
+    @return CFrame? -- It returns the CFrame of the both EulerAngles and the default positional influence CFrame. Or it could return nothing.
 ]=]
+
 function SpringShaker:UpdateAll(dx: number): CFrame?
 	if #__classInstances == 0 then
 		return CFrame.identity
@@ -251,8 +260,9 @@ function SpringShaker:UpdateAll(dx: number): CFrame?
 		return nil
 	end
 
-	local __rotdef = Vector3.zero
+	local __rotdef, __posdef = Vector3.zero, Vector3.zero
 	local MAX_OFFSET = 15
+	local MAX_POS_OFFSET = 10
 
 	for i = #__classInstances, 1, -1 do
 		local __SpringShakerClass = __classInstances[i]
@@ -269,14 +279,22 @@ function SpringShaker:UpdateAll(dx: number): CFrame?
 			table.remove(__classInstances, i)
 			continue
 		end
+
 		__rotdef += (__component * __SpringShakeInstance.RotationInfluence)
+		__posdef += (__component * __SpringShakeInstance.PositionInfluence)
 	end
 
 	if __rotdef.Magnitude > MAX_OFFSET then
 		__rotdef = __rotdef.Unit * MAX_OFFSET
 	end
 
-	return CFrame.fromEulerAnglesYXZ(math.rad(__rotdef.X), math.rad(__rotdef.Y), math.rad(__rotdef.Z))
+	if __posdef.Magnitude > MAX_POS_OFFSET then 
+		__posdef = __posdef.Unit * MAX_POS_OFFSET
+	end
+
+
+	return CFrame.fromEulerAnglesYXZ(math.rad(__rotdef.X), math.rad(__rotdef.Y), math.rad(__rotdef.Z))  
+	* CFrame.new(__posdef)
 end
 
 --[=[
@@ -360,6 +378,7 @@ SpringShaker:ShakeIndividual(SpringShaker:GetPreset("M2Recoil"), 0.3)
 
 @param SpringDef __SpringShakerClassDef -- The preset configuration.
 @param Duration number? -- How long before fadeout triggers.
+@deprecated v1.1.3 -- This function is standard but it has complex issues over architecture. It can be usable, but for now it is deprecated. 
 ]=]
 function SpringShaker:ShakeIndividual(SpringDef: __SpringShakerClassDef, Duration: number?)
 	local instance = ShakerInstances.new(SpringDef)

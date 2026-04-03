@@ -42,7 +42,7 @@ function ShakerInstances.new(__SpringShakeDefClass)
 		Velocity = __SpringShakeDefClass.Velocity or Vector3.zero,
 		Tension = __SpringShakeDefClass.Tension or 150,
 		Damper = __SpringShakeDefClass.Damping or 1,
-		PositionInfluence = __SpringShakeDefClass.PosInflux or __SpringShakeDefClass.PositionInfluence or Vector3.zero,
+		PositionInfluence = __SpringShakeDefClass.PosInflux or __SpringShakeDefClass.PositionInfluence or Vector3.one,
 		RotationInfluence = __SpringShakeDefClass.RotInflux or __SpringShakeDefClass.RotationInfluence or Vector3.one,
 		Elapsed = 0,
 		RawTime = 0,
